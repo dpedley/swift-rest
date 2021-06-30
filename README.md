@@ -1,6 +1,6 @@
 # swift-rest
 
-Swift REST is a library that aims to add REST like functionality to SwiftUI view creation. The main class is `AsyncRestRequest` which allows you to build URLSessions and Bind them to a quick example might help.
+Swift REST is a library that aims to add REST like functionality to SwiftUI view creation. The main class is `AsyncRestRequest` which allows you to build `URLSessions` with `Binding`. A quick example might help show how it is used.
 
 ```
 // Let's assume we have a service that returns JSON like:
