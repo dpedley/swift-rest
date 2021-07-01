@@ -29,7 +29,11 @@ public class AsyncResultDecoder<Response: Decodable>: AsyncRestDecoding {
         // Check for an error before decoding the data
         if let error = error {
             print("Parsing error: \(error)")
-            boundResult = .failure(AsyncRestError.httpNoResponseError(error: error))
+            guard let error = error as? AsyncRestError else {
+                boundResult = .failure(AsyncRestError.httpNoResponseError(error: error))
+                return
+            }
+            boundResult = .failure(error)
             return
         }
         guard let data = data else {

@@ -12,4 +12,5 @@ public enum AsyncRestError: Error {
     case httpNoResponse
     case httpNoResponseError(error: Error)
     case decodingError(error: Error)
+    case jsonEncodingError(json: String)
 }

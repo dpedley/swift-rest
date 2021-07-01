@@ -30,4 +30,16 @@ final class AsyncRestRequestTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
         XCTAssertEqual(boundPerson.wrappedValue?.name, "Doug")
     }
+    
+    func testHeaders() throws {
+        let api = AsyncRestRequest().withHeaders([
+            "first" : 1,
+            "second" : "two"
+        ])
+        let request = api.buildRequest(url: URL(fileURLWithPath: "/"))
+        let one = try XCTUnwrap(request.value(forHTTPHeaderField: "first"))
+        let two = try XCTUnwrap(request.value(forHTTPHeaderField: "second"))
+        XCTAssertEqual(one, "1")
+        XCTAssertEqual(two, "two")
+    }
 }
