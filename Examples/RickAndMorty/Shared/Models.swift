@@ -48,15 +48,15 @@ extension RickAndMorty.Character {
             if origin.name == "unknown" {
                 locationDetails = "whereabouts unknown"
             } else {
-                locationDetails = "they can be found on \(origin.name)"
+                locationDetails = " found on \(origin.name)"
             }
         } else {
             if origin.name == "unknown" {
-                locationDetails = "currently on \(location.name), but it is not known where they originally came from"
+                locationDetails = "currently on \(location.name), origins are not known"
             } else if location.name == "unknown" {
-                locationDetails = "originally from \(origin.name), but it is not known where they can be found"
+                locationDetails = "originally from \(origin.name), but current location isn't known"
             } else {
-                locationDetails = "originally from \(origin.name), but they currently can be found on \(location.name)"
+                locationDetails = "originally from \(origin.name), but can currently be found on \(location.name)"
             }
         }
         return "\(name) \(isWas)\(n) \(species.lowercased())\(genderString) \(locationDetails)."

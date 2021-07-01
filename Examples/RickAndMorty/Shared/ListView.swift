@@ -12,6 +12,7 @@ struct ListView: View {
     @ObservedObject var viewModel = ListViewModel()
     var api: AsyncRestRequest
     func nextButton() -> some View {
+        print("Loading")
         let buttonText: String
         var color = Color.green
         switch self.viewModel.pagination {
@@ -27,43 +28,46 @@ struct ListView: View {
         }
         return Text(buttonText).foregroundColor(color).padding()
     }
+    var columns: [GridItem] =
+             Array(repeating: .init(.flexible()), count: 1)
     var body: some View {
         NavigationView {
-            List {
-                ForEach(viewModel.characters) { character in
-                    NavigationLink(destination:                     CharacterView(characterID: character.id)) {
-                        ListItemView(character: character)
+            ScrollView {
+                LazyVGrid(columns: columns) {
+                    ForEach(viewModel.characters) { character in
+                        NavigationLink(destination:                     CharacterView(characterID: character.id)) {
+                            ListItemView(character: character)
+                        }
+                    }
+                    Button {
+                        switch self.viewModel.pagination {
+                        case .loading:
+                            // Button masher, do nothing
+                            return
+                        case .empty:
+                            _ = self.api
+                                .get()
+                        case .nextPage(let page):
+                            _ = self.api
+                                .addQueryParameter("page", value: page)
+                                .get()
+                        case .complete:
+                            // Completely Loaded, do nothing
+                            return
+                        }
+                    } label: {
+                        self.nextButton()
                     }
                 }
-                Button {
-                    switch self.viewModel.pagination {
-                    case .loading:
-                        // Button masher, do nothing
-                        return
-                    case .empty:
-                        _ = self.api
-                            .resource("character")
-                            .bind(result: $viewModel.listResult)
-                            .get()
-                    case .nextPage(let page):
-                        _ = self.api
-                            .resource("character")
-                            .addQueryParameter("page", value: page)
-                            .bind(result: $viewModel.listResult)
-                            .get()
-                    case .complete:
-                        // Completely Loaded, do nothing
-                        return
-                    }
-                } label: {
-                    self.nextButton()
-                }
+                .padding(.horizontal, 16)
             }
             .navigationTitle("Rick and Morty")
         }
     }
     init(api: AsyncRestRequest = AsyncRestRequest(baseURL: RickAndMorty.baseURL)) {
-        self.api = api
+        self.api = api.resource("character")
+        _ = api.bind(result: $viewModel.listResult).get()
+
     }
 }
 

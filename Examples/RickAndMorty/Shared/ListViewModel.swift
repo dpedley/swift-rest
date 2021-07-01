@@ -17,7 +17,7 @@ class ListViewModel: ObservableObject {
     }
     @Published var characters: [RickAndMorty.Character] = []
     @Published var responseError: AsyncRestError?
-    @Published var pagination = PagingState.empty
+    @Published var pagination = PagingState.loading
     @Published var listResult: AsyncResult<RickAndMorty.ListResponse>? {
         didSet {
             guard let result = listResult else {

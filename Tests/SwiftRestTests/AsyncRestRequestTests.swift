@@ -2,7 +2,7 @@ import XCTest
 import SwiftUI
 import Combine
 
-@testable import swift_rest
+@testable import SwiftRest
 
 struct MockPerson: Codable {
     var name: String

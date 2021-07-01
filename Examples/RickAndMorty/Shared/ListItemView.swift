@@ -30,6 +30,6 @@ struct ListItemView: View {
 
 struct ListItemView_Previews: PreviewProvider {
     static var previews: some View {
-        RickAndMortyListItem(character: rick)
+        ListItemView(character: rick)
     }
 }

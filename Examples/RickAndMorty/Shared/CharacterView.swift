@@ -34,7 +34,7 @@ struct CharacterView: View {
                     }
                     Text(character.summaryDescription)
                 }
-                .frame(width: geometry.size.width - 32)
+                .padding(.horizontal, 16)
             }
             .frame(width: geometry.size.width)
         }

@@ -63,7 +63,7 @@ public class AsyncRestRequest {
         }
         return self
     }
-    func get() -> Self {
+    public func get() -> Self {
         guard configuration.mockResponse == nil else {
             return processMockResponse()
         }
@@ -80,39 +80,39 @@ public class AsyncRestRequest {
         }).store(in: &cancellables)
         return self
     }
-    func resource(_ resource: String) -> Self {
+    public func resource(_ resource: String) -> Self {
         self.resource = resource
         return self
     }
-    func addQueryParameter(_ name: String, value: Codable) -> Self {
+    public func addQueryParameter(_ name: String, value: Codable) -> Self {
         queryParameters[name] = value
         return self
     }
-    func withQueryParameters(_ parameters: [String: Codable]) -> Self {
+    public func withQueryParameters(_ parameters: [String: Codable]) -> Self {
         queryParameters = parameters
         return self
     }
-    func setEncodePlusInParameters(_ encodePlus: Bool) -> Self {
+    public func setEncodePlusInParameters(_ encodePlus: Bool) -> Self {
         configuration.encodePlusInParameters = encodePlus
         return self
     }
-    func bind<Response: Decodable>(result: Binding<AsyncResult<Response>?>) -> Self {
+    public func bind<Response: Decodable>(result: Binding<AsyncResult<Response>?>) -> Self {
         decoder = AsyncResultDecoder(boundResult: result)
         return self
     }
-    func bind<Response: Decodable>(success: Binding<Response?>) -> Self {
+    public func bind<Response: Decodable>(success: Binding<Response?>) -> Self {
         decoder = AsyncSuccessDecoder(boundResponse: success)
         return self
     }
-    func with(baseURL: URL) -> Self {
+    public func with(baseURL: URL) -> Self {
         configuration.baseURL = baseURL
         return self
     }
-    func mock(response: Decodable) -> Self {
+    public func mock(response: Decodable) -> Self {
         configuration.mockResponse = response
         return self
     }
-    init(baseURL: URL? = nil) {
+    public init(baseURL: URL? = nil) {
         self.configuration = AsyncRestConfiguration(baseURL: baseURL)
     }
 }
