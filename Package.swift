@@ -25,7 +25,7 @@ let package = Package(
             name: "SwiftRest",
             dependencies: [],
             exclude: [
-                "PlayChess" // This is the sample app
+                "Examples" // These are the example apps
             ]),
         .testTarget(
             name: "SwiftRestTests",

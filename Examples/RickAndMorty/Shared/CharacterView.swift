@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftRest
 
 struct CharacterView: View {
     @State var character: RickAndMorty.Character?

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftRest
 
 struct ListView: View {
     @ObservedObject var viewModel = ListViewModel()
@@ -30,7 +31,7 @@ struct ListView: View {
         NavigationView {
             List {
                 ForEach(viewModel.characters) { character in
-                    NavigationLink(destination:                     RickAndMortyCharacterView(characterID: character.id)) {
+                    NavigationLink(destination:                     CharacterView(characterID: character.id)) {
                         ListItemView(character: character)
                     }
                 }

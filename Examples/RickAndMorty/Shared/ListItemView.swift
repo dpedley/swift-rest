@@ -5,6 +5,9 @@
 //  Created by Douglas Pedley on 6/30/21.
 //
 
+import SwiftUI
+import SwiftRest
+
 struct ListItemView: View {
     let character: RickAndMorty.Character
     var body: some View {

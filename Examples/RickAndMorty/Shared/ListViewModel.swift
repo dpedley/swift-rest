@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftRest
 
 class ListViewModel: ObservableObject {
     enum PagingState {
