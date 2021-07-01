@@ -8,19 +8,19 @@
 import SwiftUI
 import Combine
 
-struct AsyncRestConfiguration {
+public struct AsyncRestConfiguration {
     var baseURL: URL?
     var encodePlusInParameters = true
     var mockResponse: Decodable?
 }
 
-protocol AsyncRestDecoding {
+public protocol AsyncRestDecoding {
     func handleResponse(data: Data?, error: Error?)
     func mock(response: Decodable)
     func mock(error: AsyncRestError)
 }
 
-class AsyncRestRequest {
+public class AsyncRestRequest {
     var configuration: AsyncRestConfiguration
     private var dataPublisher: AnyPublisher<URLSession.DataTaskPublisher.Output, URLSession.DataTaskPublisher.Failure>?
     private var cancellables = Set<AnyCancellable>()

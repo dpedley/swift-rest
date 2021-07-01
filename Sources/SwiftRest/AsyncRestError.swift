@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-enum AsyncRestError: Error {
+public enum AsyncRestError: Error {
     case httpNoResponse
     case httpNoResponseError(error: Error)
     case decodingError(error: Error)
