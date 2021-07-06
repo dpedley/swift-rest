@@ -23,6 +23,7 @@ struct CharacterView: View {
                     Text(character.name)
                         .font(.title)
                         .bold()
+                        .multilineTextAlignment(.center)
                     AsyncImage(url: URL(string: character.image)!) { phase in
                         if let image = phase.image {
                             image.resizable()

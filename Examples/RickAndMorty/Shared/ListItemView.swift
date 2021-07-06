@@ -13,6 +13,9 @@ struct ListItemView: View {
     var body: some View {
         HStack {
             Text(character.name)
+                .multilineTextAlignment(.leading)
+                .font(.title2)
+                .foregroundColor(.black)
             Spacer()
             AsyncImage(url: URL(string: character.image)) { phase in
                 if let image = phase.image {
