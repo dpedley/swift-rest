@@ -23,17 +23,25 @@ struct PostView: View {
     func comments(comments: [Comment]?) -> AnyView? {
         guard let comments = comments else { return nil }
         return AnyView(
-            ForEach(comments) { comment in
-                VStack {
-                    Text(comment.body)
-                    Text("\(comment.name): \(comment.email)")
-                        .font(.caption)
+            GeometryReader { geometry in
+                ScrollView {
+                    ForEach(comments) { comment in
+                        VStack(alignment: .leading) {
+                            Text(comment.body)
+                            Spacer()
+                                .frame(width: geometry.size.width - 48)
+                            Text(comment.name)
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                            Text(comment.email)
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                        }
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 8).stroke())
+                    }
                 }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 8).stroke()
-                )
-            }
+            }.padding(.leading)
         )
     }
     var body: some View {
@@ -41,8 +49,13 @@ struct PostView: View {
             postBody(post: viewModel.post)
             Spacer()
             comments(comments: viewModel.comments)
+            Spacer()
         }
         .navigationTitle(viewModel.title)
+        .onAppear {
+            _ = postRequest.get()
+            _ = commentsRequest.get()
+        }
     }
     init(postRequest: AsyncRestRequest = AsyncRestRequest(baseURL: JsonPlaceholder.baseURL),
          commentsRequest: AsyncRestRequest = AsyncRestRequest(baseURL: JsonPlaceholder.baseURL),
@@ -51,9 +64,9 @@ struct PostView: View {
         self.postId = postId
         self.viewModel = PostViewModel()
         self.postRequest = postRequest.resource("posts/\(postId)")
-        self.commentsRequest = commentsRequest.resource("comments/\(postId)")
-        _ = postRequest.bind(success: $viewModel.post).get()
-        _ = commentsRequest.bind(success: $viewModel.comments).get()
+        self.commentsRequest = commentsRequest.resource("comments").addQueryParameter("postId", value: postId)
+        _ = postRequest.bind(success: $viewModel.post)
+        _ = commentsRequest.bind(success: $viewModel.comments)
     }
 }
 

@@ -22,6 +22,9 @@ struct PostListView: View {
 
         }
         .navigationTitle(viewModel.title)
+        .onAppear {
+            _ = api.get()
+        }
     }
     init(api: AsyncRestRequest = AsyncRestRequest(baseURL: JsonPlaceholder.baseURL), user: User? = nil) {
         self.user = user
@@ -30,7 +33,7 @@ struct PostListView: View {
         if let user = user {
             _ = api.addQueryParameter("userId", value: user.id)
         }
-        _ = api.bind(success: $viewModel.posts).get()
+        _ = api.bind(success: $viewModel.posts)
     }
 }
 
