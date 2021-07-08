@@ -20,38 +20,27 @@ struct PostView: View {
             Text(post.title)
         )
     }
-    func comments(comments: [Comment]?) -> AnyView? {
-        guard let comments = comments else { return nil }
-        return AnyView(
-            GeometryReader { geometry in
-                ScrollView {
-                    ForEach(comments) { comment in
-                        VStack(alignment: .leading) {
-                            Text(comment.body)
-                            Spacer()
-                                .frame(width: geometry.size.width - 48)
-                            Text(comment.name)
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                            Text(comment.email)
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                        }
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 8).stroke())
-                    }
-                }
-            }.padding(.leading)
-        )
-    }
     var body: some View {
-        VStack {
-            postBody(post: viewModel.post)
-            Spacer()
-            comments(comments: viewModel.comments)
-            Spacer()
+        ScrollView {
+            VStack(alignment: .leading) {
+                postBody(post: viewModel.post)
+                Spacer()
+                ForEach(viewModel.comments ?? []) { comment in
+                    CommentView(comment: comment)
+                }
+            }
+            .padding(.horizontal)
         }
-        .navigationTitle(viewModel.title)
+        .navigationBarTitle(viewModel.title)
+        .navigationBarItems(trailing:
+            NavigationLink(destination: {
+                CreateCommentView(user: user,
+                                  postId: postId,
+                                  commentId: (viewModel.comments?.count ?? 0) + 1)
+            }, label: {
+                Image(systemName: "plus.bubble")
+            })
+        )
         .onAppear {
             _ = postRequest.get()
             _ = commentsRequest.get()

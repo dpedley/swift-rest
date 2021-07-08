@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftRest
 
 enum LoadingState {
     case loading
@@ -43,4 +44,21 @@ class PostViewModel: ObservableObject {
     }
     @Published var comments: [Comment]?
     @Published var title = "Loading Post"
+}
+
+class CreateCommentViewModel: ObservableObject {
+    @Published var result: AsyncResult<Comment>? {
+        didSet {
+            guard let result = result else {
+                return
+            }
+            switch result {
+            case .success(let comment):
+                print("new comment: \(comment)")
+            case .failure(let error):
+                print("Error: \(error)")
+            }
+        }
+    }
+    @Published var newComment = CreateNewComment()
 }

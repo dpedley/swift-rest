@@ -57,12 +57,23 @@ public class AsyncRestRequest {
     public func delete() -> Self {
         return processRequest(method: "DELETE", httpBody: nil)
     }
-    public func post(body: Codable? = nil) -> Self {
+    public func post<Body: Encodable>(body: Body? = nil, mockResponse: Bool = false) -> Self {
         guard let body = body else {
+            if mockResponse {
+                fatalError("Cannot mock response, none given.")
+            }
             return processRequest(method: "POST", httpBody: nil)
         }
         do {
-            let httpBody = try JSONSerialization.data(withJSONObject: body, options: .fragmentsAllowed)
+            let encoder = JSONEncoder()
+            let httpBody = try encoder.encode(body)
+            if mockResponse {
+                guard let body = body as? Codable else {
+                    fatalError("Cannot mock response from body")
+                }
+                return mock(response: body)
+                        .processRequest(method: "POST", httpBody: httpBody)
+            }
             return processRequest(method: "POST", httpBody: httpBody)
         } catch let error {
             decoder?.handleResponse(data: nil, error: error)
@@ -80,12 +91,23 @@ public class AsyncRestRequest {
         }
         return processRequest(method: "POST", httpBody: httpBody)
     }
-    public func put(body: Codable? = nil) -> Self {
+    public func put<Body: Encodable>(body: Body? = nil, mockResponse: Bool = false) -> Self {
         guard let body = body else {
+            if mockResponse {
+                fatalError("Cannot mock response, none given.")
+            }
             return processRequest(method: "PUT", httpBody: nil)
         }
         do {
-            let httpBody = try JSONSerialization.data(withJSONObject: body, options: .fragmentsAllowed)
+            let encoder = JSONEncoder()
+            let httpBody = try encoder.encode(body)
+            if mockResponse {
+                guard let body = body as? Codable else {
+                    fatalError("Cannot mock response from body")
+                }
+                return mock(response: body)
+                        .processRequest(method: "PUT", httpBody: httpBody)
+            }
             return processRequest(method: "PUT", httpBody: httpBody)
         } catch let error {
             decoder?.handleResponse(data: nil, error: error)

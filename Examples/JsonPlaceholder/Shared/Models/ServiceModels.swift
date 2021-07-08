@@ -26,6 +26,15 @@ struct Comment: Codable, Identifiable {
     let body: String
 }
 
+struct CreateNewComment: Codable, Identifiable {
+    var postId = 0
+    var id = 0
+    var name = ""
+    var email = ""
+    var body = ""
+}
+
+
 struct User: Codable, Identifiable {
     let id: Int
     let name: String

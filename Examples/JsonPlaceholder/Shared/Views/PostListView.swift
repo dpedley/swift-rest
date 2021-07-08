@@ -21,7 +21,7 @@ struct PostListView: View {
             }
 
         }
-        .navigationTitle(viewModel.title)
+        .navigationBarTitle(viewModel.title)
         .onAppear {
             _ = api.get()
         }
