@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 
+/// AsyncRestError - The error returned when binding to a result and a failure happens.
 public enum AsyncRestError: Error {
     case httpNoResponse
     case httpNoResponseError(error: Error)
