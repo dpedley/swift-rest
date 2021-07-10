@@ -24,7 +24,7 @@ public class AsyncResultDecoder<Response: Decodable>: AsyncRestDecoding {
     public func mock(error: AsyncRestError) {
         boundResult = .failure(error)
     }
-    public func handleResponse(data: Data?, error: Error?) {
+    public func handleResponse(data: Data?, error: Error?, urlResponse: URLResponse?) {
         print("Parsing response")
         // Check for an error before decoding the data
         if let error = error {

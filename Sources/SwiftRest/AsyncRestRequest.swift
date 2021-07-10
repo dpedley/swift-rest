@@ -13,10 +13,11 @@ public struct AsyncRestConfiguration {
     var encodePlusInParameters = true
     var addJSONHeaders = true
     var mockResponse: Decodable?
+    var expectedResponseCodes = (200..<300)
 }
 
 public protocol AsyncRestDecoding {
-    func handleResponse(data: Data?, error: Error?)
+    func handleResponse(data: Data?, error: Error?, urlResponse: URLResponse?)
     func mock(response: Decodable)
     func mock(error: AsyncRestError)
 }
@@ -29,6 +30,7 @@ public class AsyncRestRequest {
     private var resource: String?
     private var queryParameters: [String: Codable] = [:]
     private var requestHeaders: [String: Codable] = [:]
+    private var urlResponse: URLResponse?
     private var resourceURL: URL {
         guard let baseURL = configuration.baseURL,
               var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: true) else {
@@ -76,7 +78,7 @@ public class AsyncRestRequest {
             }
             return processRequest(method: "POST", httpBody: httpBody)
         } catch let error {
-            decoder?.handleResponse(data: nil, error: error)
+            decoder?.handleResponse(data: nil, error: error, urlResponse: urlResponse)
             return self
         }
     }
@@ -86,7 +88,7 @@ public class AsyncRestRequest {
         }
         guard let httpBody = json.data(using: .utf8) else {
             let error = AsyncRestError.jsonEncodingError(json: json)
-            decoder?.handleResponse(data: nil, error: error)
+            decoder?.handleResponse(data: nil, error: error, urlResponse: urlResponse)
             return self
         }
         return processRequest(method: "POST", httpBody: httpBody)
@@ -110,7 +112,7 @@ public class AsyncRestRequest {
             }
             return processRequest(method: "PUT", httpBody: httpBody)
         } catch let error {
-            decoder?.handleResponse(data: nil, error: error)
+            decoder?.handleResponse(data: nil, error: error, urlResponse: urlResponse)
             return self
         }
     }
@@ -120,7 +122,7 @@ public class AsyncRestRequest {
         }
         guard let httpBody = json.data(using: .utf8) else {
             let error = AsyncRestError.jsonEncodingError(json: json)
-            decoder?.handleResponse(data: nil, error: error)
+            decoder?.handleResponse(data: nil, error: error, urlResponse: urlResponse)
             return self
         }
         return processRequest(method: "PUT", httpBody: httpBody)
@@ -155,6 +157,10 @@ public class AsyncRestRequest {
     }
     public func bind<Response: Decodable>(success: Binding<Response?>) -> Self {
         decoder = AsyncSuccessDecoder(boundResponse: success)
+        return self
+    }
+    public func bind(statusCode: Binding<Int?>) -> Self {
+        decoder = AsyncStatusCodeDecoder(boundCode: statusCode)
         return self
     }
     public func with(baseURL: URL) -> Self {
@@ -208,12 +214,17 @@ extension AsyncRestRequest {
             request.httpBody = httpBody
         }
         dataPublisher = urlSession.dataTaskPublisher(for: request).eraseToAnyPublisher()
-        dataPublisher?.receive(on: DispatchQueue.main).sink(receiveCompletion: { failure in
+        dataPublisher?
+            .tryMap() { element -> Data in
+                self.urlResponse = element.response
+                return element.data
+            }
+            .receive(on: DispatchQueue.main).sink(receiveCompletion: { failure in
 //            print("Failure \(failure)")
             // TODO: parse failures for URLError
-        }, receiveValue: { [weak self] result in
-            guard let decoder = self?.decoder else { return }
-            decoder.handleResponse(data: result.data, error: nil)
+        }, receiveValue: { [weak self] data in
+            guard let self = self, let decoder = self.decoder else { return }
+            decoder.handleResponse(data: data, error: nil, urlResponse: self.urlResponse)
         }).store(in: &cancellables)
         return self
     }

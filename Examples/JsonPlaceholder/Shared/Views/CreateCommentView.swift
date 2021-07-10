@@ -36,7 +36,7 @@ struct CreateCommentView: View {
          postId: Int,
          commentId: Int) {
         self.user = user
-        self.createPostRequest = api.resource("posts/\(postId)")
+        self.createPostRequest = api.resource("comments")
         viewModel.newComment.postId = postId
         viewModel.newComment.id = commentId
         viewModel.newComment.name = user?.name ?? "anonymous"

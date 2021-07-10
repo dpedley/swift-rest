@@ -23,7 +23,7 @@ public class AsyncSuccessDecoder<Response: Decodable>: AsyncRestDecoding {
         print("AsyncSuccessDecoder error: \(error)")
         boundResponse = nil
     }
-    public func handleResponse(data: Data?, error: Error?) {
+    public func handleResponse(data: Data?, error: Error?, urlResponse: URLResponse?) {
         // Check for an error before decoding the data
         guard error == nil, let data = data else {
             boundResponse = nil

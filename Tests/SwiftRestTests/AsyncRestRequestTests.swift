@@ -11,6 +11,25 @@ struct MockPerson: Codable {
 }
 
 final class AsyncRestRequestTests: XCTestCase {
+    func testMockStatusCode() throws {
+        let waitForGet = expectation(description: "waitForGet")
+        var responseCode: Int?
+        let boundCode = Binding<Int?>(
+            get: {
+            responseCode
+        },
+            set: { statusCode, _ in
+            waitForGet.fulfill()
+            responseCode = statusCode
+        })
+        let api = AsyncRestRequest()
+                    .mock(response: 200)
+                    .bind(statusCode: boundCode)
+        _ = api.get()
+        waitForExpectations(timeout: 10, handler: nil)
+        XCTAssertEqual(responseCode, 200)
+    }
+    
     func testMockPersonResponse() throws {
         let waitForGet = expectation(description: "waitForGet")
         var optionalPerson: MockPerson?
@@ -33,14 +52,14 @@ final class AsyncRestRequestTests: XCTestCase {
     }
     
     func testMockPersonPOST() throws {
-        let waitForGet = expectation(description: "waitForGet")
+        let waitForPost = expectation(description: "waitForPost")
         var optionalPerson: MockPerson?
         let boundPerson = Binding<MockPerson?>(
             get: {
             optionalPerson
         },
             set: { mockPerson, _ in
-            waitForGet.fulfill()
+            waitForPost.fulfill()
             optionalPerson = mockPerson
         })
         let aPerson = MockPerson(name: "Mary", age: 30, living: true)
